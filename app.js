@@ -15,12 +15,12 @@ var lessons = require('./routes/lessons');
 const creation = require('./routes/creation');
 // admin
 const admin = require('./routes/admin_index');
+//config
+const config = require('./config');
 // db
-const dbUser = 'xxxx';
-const dbPwd = 'xxxxxxxx';
-const dbAuth = dbUser + ':' + dbPwd || '';
+const dbAuth = config.dbUser + ':' + config.dbPwd || '';
 const dbMsg = '?authSource=admin' || '';
-const dbUrl = 'mongodb://' + dbAuth + '@localhost:27017/xxxxx' + dbMsg;
+const dbUrl = 'mongodb://' + dbAuth + '@localhost:' + config.dbPort + '/' + config.dbName + dbMsg;
 const mongoose = require('mongoose');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -45,11 +45,11 @@ app.use(cookieParser());
 app.use(
   session({
     resave: false,
-    secret: 'xxxxxxxx',
+    secret: config.secret,
     saveUninitialized: true,
     store: new mongoStore({
       url: dbUrl,
-      collection: 'xxxxxx',
+      collection: config.collection,
     }),
     cookie: { maxAge: 86400 },
   })

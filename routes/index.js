@@ -12,6 +12,7 @@ const router = express.Router();
 const moment = require('moment');
 const common = require('./common');
 const jwt = require('jsonwebtoken');
+const config = require('../config');
 moment.locale('zh-CN');
 
 let govname = '特慧编';
@@ -117,12 +118,8 @@ router.post('/signin', function (req, res, next) {
               });
             } else {
               req.session.user = usermsg[0];
-              const payload = { username: user_name, isBanned: false };
-              const secret = 'XXXXXXXX';
-              const token = jwt.sign(payload, secret, { expiresIn: 60 * 60 * 24 });
-              console.log(token);
-              const result = jwt.verify(token,secret)
-              console.log(result);
+              const payload = { username: user_name, userid: usermsg[0]._id };
+              const token = jwt.sign(payload, config.secret, { expiresIn: 60 * 60 * 24 });
               res.send({
                 status: 'success',
                 token,
@@ -255,7 +252,9 @@ router.post('/users/change/password', function (req, res, next) {
 // 退出登录
 router.get('/logout', function (req, res, next) {
   delete req.session.user;
-  res.redirect('/');
+  res.send({
+    status: 'success'
+  });
 });
 
 // 关于我们
