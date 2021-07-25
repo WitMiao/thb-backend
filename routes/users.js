@@ -29,23 +29,31 @@ let pagetitle = ' | 特慧编';
 router.get('/getUserInfo', function (req, res, next) {
   const token = req.headers.token;
   if (token) {
-    const result = jwt.verify(token, config.secret);
-    const { userid } = result;
-    User.fetchById(userid, function (err, usermsg) {
+    const result = jwt.verify(token, config.secret, function (err, decoded) {
       if (err) {
-        console.log(err);
+        res.send({
+          status: 'error',
+          msg: 'token不存在或者过期',
+        });
       } else {
-        if (usermsg.length > 0) {
-          res.send({
-            status: 'success',
-            userinfo: usermsg[0],
-          });
-        } else {
-          res.send({
-            status: 'error',
-            msg: 'token不存在或者过期',
-          });
-        }
+        const { userid } = result;
+        User.fetchById(userid, function (err, usermsg) {
+          if (err) {
+            console.log(err);
+          } else {
+            if (usermsg.length > 0) {
+              res.send({
+                status: 'success',
+                userinfo: usermsg[0],
+              });
+            } else {
+              res.send({
+                status: 'error',
+                msg: 'token不存在或者过期',
+              });
+            }
+          }
+        });
       }
     });
   } else {

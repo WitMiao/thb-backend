@@ -77,7 +77,10 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send({
+    status: 'error',
+    msg: '服务器无响应，请重试或者联系管理员',
+  });
 });
 
 module.exports = app;

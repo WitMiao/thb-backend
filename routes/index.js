@@ -18,8 +18,12 @@ moment.locale('zh-CN');
 let govname = '特慧编';
 let pagetitle = '首页 | 特慧编';
 
-/* GET 首页 page. */
 router.get('/', function (req, res, next) {
+  res.json({message: 'Welcome to the THB-APIs'})
+});
+
+/* GET 首页info */
+router.get('/homeInfo', function (req, res, next) {
   let _user = req.session.user;
   if (_user) {
     res.locals.user = _user;
@@ -60,14 +64,17 @@ router.get('/', function (req, res, next) {
                       if (err) {
                         console.log(err);
                       }
-                      res.render('index', {
-                        title: pagetitle,
-                        banners: banners,
-                        hotlist: hotlist,
-                        keeplist: keeplist,
-                        newlist: newlist,
-                        showlist: showlist,
-                        icomment: index_com,
+                      res.send({
+                        status: 'success',
+                        homeinfo: {
+                          title: pagetitle,
+                          banners: banners,
+                          hotlist: hotlist,
+                          keeplist: keeplist,
+                          newlist: newlist,
+                          showlist: showlist,
+                          icomment: index_com,
+                        },
                       });
                     });
                   });
@@ -119,7 +126,7 @@ router.post('/signin', function (req, res, next) {
             } else {
               req.session.user = usermsg[0];
               const payload = { username: user_name, userid: usermsg[0]._id };
-              const token = jwt.sign(payload, config.secret, { expiresIn: 60 * 60 * 24 });
+              const token = jwt.sign(payload, config.secret, { expiresIn: '1d' });
               res.send({
                 status: 'success',
                 token,
@@ -253,7 +260,7 @@ router.post('/users/change/password', function (req, res, next) {
 router.get('/logout', function (req, res, next) {
   delete req.session.user;
   res.send({
-    status: 'success'
+    status: 'success',
   });
 });
 
