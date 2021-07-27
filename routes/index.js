@@ -19,80 +19,7 @@ let govname = '特慧编';
 let pagetitle = '首页 | 特慧编';
 
 router.get('/', function (req, res, next) {
-  res.json({message: 'Welcome to the THB-APIs'})
-});
-
-/* GET 首页info */
-router.get('/homeInfo', function (req, res, next) {
-  let _user = req.session.user;
-  if (_user) {
-    res.locals.user = _user;
-  }
-  Banner.find({}).exec(function (err, banners) {
-    Works.find({})
-      .sort({ zan: -1 })
-      .limit(10)
-      .populate('user', 'headimg nickname')
-      .exec(function (err, hotlist) {
-        if (err) {
-          console.log(err);
-        }
-        Works.find({})
-          .sort({ keep: -1 })
-          .limit(10)
-          .populate('user', 'headimg nickname')
-          .exec(function (err, keeplist) {
-            if (err) {
-              console.log(err);
-            }
-            Works.find({})
-              .sort({ 'meta.createAt': -1 })
-              .limit(10)
-              .populate('user', 'headimg nickname')
-              .exec(function (err, newlist) {
-                if (err) {
-                  console.log(err);
-                }
-                Works.find({ isShow: true })
-                  .sort({ keep: -1 })
-                  .populate('user', 'headimg nickname')
-                  .exec(function (err, showlist) {
-                    if (err) {
-                      console.log(err);
-                    }
-                    Icomment.find({}).exec(function (err, index_com) {
-                      if (err) {
-                        console.log(err);
-                      }
-                      res.send({
-                        status: 'success',
-                        homeinfo: {
-                          title: pagetitle,
-                          banners: banners,
-                          hotlist: hotlist,
-                          keeplist: keeplist,
-                          newlist: newlist,
-                          showlist: showlist,
-                          icomment: index_com,
-                        },
-                      });
-                    });
-                  });
-              });
-          });
-      });
-  });
-});
-
-/*  产品简介  */
-router.get('/ourjob', function (req, res, next) {
-  let _user = req.session.user;
-  if (_user) {
-    res.locals.user = _user;
-  }
-  res.render('support', {
-    title: pagetitle,
-  });
+  res.json({ message: 'Welcome to the THB-APIs' });
 });
 
 /*  登录接口  */
@@ -221,6 +148,79 @@ router.post('/register', function (req, res, next) {
       }
     });
   }
+});
+
+/* GET 首页info */
+router.get('/homeInfo', function (req, res, next) {
+  let _user = req.session.user;
+  if (_user) {
+    res.locals.user = _user;
+  }
+  Banner.find({}).exec(function (err, banners) {
+    Works.find({})
+      .sort({ zan: -1 })
+      .limit(10)
+      .populate('user', 'headimg nickname')
+      .exec(function (err, hotlist) {
+        if (err) {
+          console.log(err);
+        }
+        Works.find({})
+          .sort({ keep: -1 })
+          .limit(10)
+          .populate('user', 'headimg nickname')
+          .exec(function (err, keeplist) {
+            if (err) {
+              console.log(err);
+            }
+            Works.find({})
+              .sort({ 'meta.createAt': -1 })
+              .limit(10)
+              .populate('user', 'headimg nickname')
+              .exec(function (err, newlist) {
+                if (err) {
+                  console.log(err);
+                }
+                Works.find({ isShow: true })
+                  .sort({ keep: -1 })
+                  .populate('user', 'headimg nickname')
+                  .exec(function (err, showlist) {
+                    if (err) {
+                      console.log(err);
+                    }
+                    Icomment.find({}).exec(function (err, index_com) {
+                      if (err) {
+                        console.log(err);
+                      }
+                      res.send({
+                        status: 'success',
+                        homeinfo: {
+                          title: pagetitle,
+                          banners: banners,
+                          hotlist: hotlist,
+                          keeplist: keeplist,
+                          newlist: newlist,
+                          showlist: showlist,
+                          icomment: index_com,
+                        },
+                      });
+                    });
+                  });
+              });
+          });
+      });
+  });
+});
+
+/*  产品简介  */
+router.get('/ourjob', function (req, res, next) {
+  let _user = req.session.user;
+  if (_user) {
+    res.locals.user = _user;
+  }
+  res.render('support', {
+    title: pagetitle,
+  });
 });
 
 // 修改密码

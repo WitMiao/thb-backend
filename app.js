@@ -6,7 +6,8 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const mongoStore = require('connect-mongo')(session);
-
+const jwt = require('jsonwebtoken');
+const User = require("./models/user");
 const index = require('./routes/index');
 const users = require('./routes/users');
 const works = require('./routes/works');
@@ -54,6 +55,58 @@ app.use(
     cookie: { maxAge: 86400 },
   })
 );
+
+/** 全局api守卫 验证token */
+app.use(function (req, res, next) {
+  const { path } = req;
+  console.log(path);
+  const pathList = [
+    '/',
+    '/signin',
+    '/register',
+    '/homeInfo',
+    '/works',
+    '/pythonide',
+    '/lessons',
+    '/creation',
+    '/thbadmin/login',
+  ];
+  if (pathList.indexOf(path) > -1) {
+    next();
+  } else {
+    const token = req.headers.token;
+    if (token) {
+      jwt.verify(token, config.secret, function (err, decoded) {
+        if (err) {
+          res.send({
+            status: 'notoken',
+            msg: 'token不存在或者过期',
+          });
+        } else {
+          const { userid } = decoded;
+          User.searchStatus(userid, function (err, userinfo) {
+            if (err) {
+              console.log(err);
+            }
+            if (userinfo[0].status === -1) {
+              res.send({
+                status: "banned",
+                msg: "你的账号已被封禁，如有疑问请联系管理员",
+              });
+            } else {
+              next();
+            }
+          });
+        }
+      });
+    } else {
+      res.send({
+        status: 'notoken',
+        msg: 'token不存在或者过期',
+      });
+    }
+  }
+});
 
 app.use('/', index);
 app.use('/users', users);
