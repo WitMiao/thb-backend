@@ -70,6 +70,7 @@ app.use(function (req, res, next) {
     '/lessons',
     '/creation',
     '/thbadmin/login',
+    '/logout'
   ];
   if (pathList.indexOf(path) > -1) {
     next();

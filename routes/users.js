@@ -32,7 +32,7 @@ router.get('/getUserInfo', function (req, res, next) {
     jwt.verify(token, config.secret, function (err, decoded) {
       if (err) {
         res.send({
-          status: 'error',
+          status: 'notoken',
           msg: 'token不存在或者过期',
         });
       } else {
@@ -48,7 +48,7 @@ router.get('/getUserInfo', function (req, res, next) {
               });
             } else {
               res.send({
-                status: 'error',
+                status: 'notoken',
                 msg: 'token不存在或者过期',
               });
             }
@@ -58,7 +58,7 @@ router.get('/getUserInfo', function (req, res, next) {
     });
   } else {
     res.send({
-      status: 'error',
+      status: 'notoken',
       msg: 'token不存在或者过期',
     });
   }
